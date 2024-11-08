@@ -2,7 +2,8 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBlogPosts } from '../redux/actions/blogActions';
+import { fetchBlogPosts, deleteBlogPost } from '../redux/actions/blogActions'; // Ensure deleteBlogPost is imported
+import BlogPost from './BlogPost'; // Import the BlogPost component
 
 const BlogPosts = () => {
   const dispatch = useDispatch();
@@ -11,6 +12,18 @@ const BlogPosts = () => {
   useEffect(() => {
     dispatch(fetchBlogPosts());
   }, [dispatch]);
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      dispatch(deleteBlogPost(id)); // Dispatch the delete action
+    }
+  };
+
+  const handleEdit = (id) => {
+    // Logic to handle editing a post
+    console.log("Edit post with ID:", id);
+    // You might want to show a modal or navigate to an edit page
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -27,10 +40,12 @@ const BlogPosts = () => {
   return (
     <div>
       {posts.map(post => (
-        <div key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.body}</p>
-        </div>
+        <BlogPost 
+          key={post.id} 
+          post={post} 
+          onEdit={handleEdit} 
+          onDelete={handleDelete} 
+        />
       ))}
     </div>
   );

@@ -73,7 +73,7 @@ const BlogPostsForm = () => {
           Submit
         </Button>
       </form>
-    </Paper>
+    </Paper>  
   );
 };
 

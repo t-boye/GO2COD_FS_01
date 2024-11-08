@@ -40,6 +40,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Fetch all blog posts when the component mounts
     dispatch(fetchAllBlogPosts());
   }, [dispatch]);
 
@@ -61,7 +62,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/blog" element={<BlogPosts />} />
+                  <Route path="/blog" element={<BlogPosts />} /> {/* Ensure BlogPosts component displays the posts */}
                   <Route path="*" element={<NotFound />} /> {/* Render NotFound for unmatched routes */}
                 </Routes>
               </Grid>

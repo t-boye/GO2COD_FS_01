@@ -1,5 +1,7 @@
 // src/redux/actions/blogActions.js
 
+import axios from 'axios';
+
 // Action Types
 export const FETCH_BLOG_POSTS_REQUEST = 'FETCH_BLOG_POSTS_REQUEST';
 export const FETCH_BLOG_POSTS_SUCCESS = 'FETCH_BLOG_POSTS_SUCCESS';
@@ -17,63 +19,61 @@ export const DELETE_BLOG_POST_REQUEST = 'DELETE_BLOG_POST_REQUEST';
 export const DELETE_BLOG_POST_SUCCESS = 'DELETE_BLOG_POST_SUCCESS';
 export const DELETE_BLOG_POST_FAILURE = 'DELETE_BLOG_POST_FAILURE';
 
-// Fetch Blog Posts
-export const fetchBlogPosts = () => async (dispatch) => {
-  dispatch({ type: FETCH_BLOG_POSTS_REQUEST });
+// Replace with your actual API endpoints
+const API_BASE_URL = 'http://localhost:5000/api'; // Update this to your backend API URL
+
+// Utility function to handle API calls
+const handleApiCall = async (dispatch, actionType, apiCall) => {
+  dispatch({ type: actionType.REQUEST });
   try {
-    const response = await fetch('YOUR_API_ENDPOINT_FOR_BLOG_POSTS'); // Replace with your API endpoint
-    const data = await response.json();
-    dispatch({ type: FETCH_BLOG_POSTS_SUCCESS, payload: data });
+    const response = await apiCall();
+    dispatch({ type: actionType.SUCCESS, payload: response.data });
   } catch (error) {
-    dispatch({ type: FETCH_BLOG_POSTS_FAILURE, payload: error.message });
+    console.error('API call failed:', error); // Log the error for debugging
+    dispatch({ type: actionType.FAILURE, payload: error.response ? error.response.data : `Error: ${error.message}` });
   }
+};
+
+// Fetch Blog Posts
+export const fetchBlogPosts = () => (dispatch) => {
+  handleApiCall(dispatch, {
+    REQUEST: FETCH_BLOG_POSTS_REQUEST,
+    SUCCESS: FETCH_BLOG_POSTS_SUCCESS,
+    FAILURE: FETCH_BLOG_POSTS_FAILURE,
+  }, () => axios.get(`${API_BASE_URL}/posts`));
 };
 
 // Create Blog Post
-export const createBlogPost = (post) => async (dispatch) => {
-  dispatch({ type: CREATE_BLOG_POST_REQUEST });
-  try {
-    const response = await fetch('YOUR_API_ENDPOINT_FOR_CREATING_POST', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(post),
-    });
-    const data = await response.json();
-    dispatch({ type: CREATE_BLOG_POST_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({ type: CREATE_BLOG_POST_FAILURE, payload: error.message });
-  }
+export const createBlogPost = (post) => (dispatch) => {
+  handleApiCall(dispatch, {
+    REQUEST: CREATE_BLOG_POST_REQUEST,
+    SUCCESS: CREATE_BLOG_POST_SUCCESS,
+    FAILURE: CREATE_BLOG_POST_FAILURE,
+  }, () => axios.post(`${API_BASE_URL}/posts`, post, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }));
 };
 
 // Update Blog Post
-export const updateBlogPost = (postId, updatedPost) => async (dispatch) => {
-  dispatch({ type: UPDATE_BLOG_POST_REQUEST });
-  try {
-    const response = await fetch(`YOUR_API_ENDPOINT_FOR_UPDATING_POST/${postId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedPost),
-    });
-    const data = await response.json();
-    dispatch({ type: UPDATE_BLOG_POST_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({ type: UPDATE_BLOG_POST_FAILURE, payload: error.message });
-  }
+export const updateBlogPost = (postId, updatedPost) => (dispatch) => {
+  handleApiCall(dispatch, {
+    REQUEST: UPDATE_BLOG_POST_REQUEST,
+    SUCCESS: UPDATE_BLOG_POST_SUCCESS,
+    FAILURE: UPDATE_BLOG_POST_FAILURE,
+  }, () => axios.put(`${API_BASE_URL}/posts/${postId}`, updatedPost, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }));
 };
 
 // Delete Blog Post
-export const deleteBlogPost = (postId) => async (dispatch) => {
-  dispatch({ type: DELETE_BLOG_POST_REQUEST });
-  try {
-    await fetch(`YOUR_API_ENDPOINT_FOR_DELETING_POST/${postId}`, {
-      method: 'DELETE',
-    });
-    dispatch({ type: DELETE_BLOG_POST_SUCCESS, payload: postId });
-  } catch (error) {
-    dispatch({ type: DELETE_BLOG_POST_FAILURE, payload: error.message });
-  }
+export const deleteBlogPost = (postId) => (dispatch) => {
+  handleApiCall(dispatch, {
+    REQUEST: DELETE_BLOG_POST_REQUEST,
+    SUCCESS: DELETE_BLOG_POST_SUCCESS,
+    FAILURE: DELETE_BLOG_POST_FAILURE,
+  }, () => axios.delete(`${API_BASE_URL}/posts/${postId}`));
 };
