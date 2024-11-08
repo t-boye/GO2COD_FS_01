@@ -2,20 +2,24 @@
 import React, { useEffect } from 'react';
 import { Container, AppBar, Typography, Grow, Grid } from '@mui/material';
 import { useDispatch } from 'react-redux';
+import { Route, Routes } from 'react-router-dom';
 import { fetchAllBlogPosts } from './actions/blogPosts';
 import BlogPosts from './components/BlogPosts';
 import BlogPostsForm from './components/BlogPostsForm';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 
-// Error Boundary Component
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -53,7 +57,13 @@ function App() {
                 <BlogPostsForm />
               </Grid>
               <Grid item xs={12} sm={9}>
-                <BlogPosts />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/blog" element={<BlogPosts />} />
+                  <Route path="*" element={<NotFound />} /> {/* Render NotFound for unmatched routes */}
+                </Routes>
               </Grid>
             </Grid>
           </Grow>
